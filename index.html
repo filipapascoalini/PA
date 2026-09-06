@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PA — Personal Assistant</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: #f5f5f7;
+      color: #1d1d1f;
+      min-height: 100vh;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .app {
+      max-width: 1100px;
+      margin: auto;
+      padding: 25px 20px 100px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .date {
+      color: #777;
+      font-size: 14px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    h1 {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #777;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.05);
+    }
+
+    .card h2 {
+      font-size: 20px;
+      margin-bottom: 17px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      padding: 15px;
+      font-size: 16px;
+      resize: vertical;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #888;
+    }
+
+    .primary {
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px;
+      border: none;
+      border-radius: 13px;
+      background: #1d1d1f;
+      color: white;
+    }
+
+    .primary:hover {
+      background: #333;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .item {
+      padding: 14px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .item:last-child {
+      border-bottom: none;
+    }
+
+    .item-title {
+      font-weight: 650;
+    }
+
+    .meta {
+      color: #777;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #f0f0f0;
+      padding: 5px 9px;
+      border-radius: 20px;
+      margin-top: 7px;
+      font-size: 12px;
+    }
+
+    .advice {
+      background: #1d1d1f;
+      color: white;
+      border-radius: 20px;
+      padding: 22px;
+      margin-top: 20px;
+    }
+
+    .advice p {
+      color: #ddd;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .empty {
+      color: #888;
+      font-size: 14px;
+    }
+
+    /* NAVEGAÇÃO */
+
+    .navigation {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .nav-button {
+      flex: 0 0 auto;
+      border: none;
+      background: white;
+      padding: 10px 15px;
+      border-radius: 12px;
+      color: #555;
+    }
+
+    .nav-button.active {
+      background: #1d1d1f;
+      color: white;
+    }
+
+    /* ORGANIZAÇÃO */
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .category {
+      background: #f5f5f7;
+      border-radius: 17px;
+      padding: 20px;
+      border: none;
+      text-align: left;
+      transition: transform .15s;
+    }
+
+    .category:hover {
+      transform: translateY(-2px);
+    }
+
+    .category-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .category-name {
+      font-weight: 650;
+      font-size: 16px;
+    }
+
+    .category-description {
+      color: #777;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    /* SUBPÁGINAS */
+
+    .subpage {
+      display: none;
+    }
+
+    .subpage.active {
+      display: block;
+    }
+
+    .back {
+      border: none;
+      background: #e9e9eb;
+      padding: 10px 15px;
+      border-radius: 11px;
+      margin-bottom: 18px;
+    }
+
+    .section {
+      background: #f5f5f7;
+      border-radius: 16px;
+      padding: 17px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-weight: 650;
+      margin-bottom: 10px;
+    }
+
+    .subitem {
+      background: white;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 8px;
+      border: 1px solid #eee;
+    }
+
+    /* CALENDÁRIO */
+
+    .calendar-item {
+      display: flex;
+      gap: 15px;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .calendar-date {
+      min-width: 55px;
+      text-align: center;
+      background: #f5f5f7;
+      border-radius: 12px;
+      padding: 9px 5px;
+    }
+
+    .calendar-day {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .calendar-month {
+      font-size: 11px;
+      color: #777;
+      text-transform: uppercase;
+    }
+
+    /* NAVEGAÇÃO INFERIOR */
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(700px, calc(100% - 25px));
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(15px);
+      border: 1px solid #ddd;
+      border-radius: 18px 18px 0 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 8px;
+      z-index: 10;
+    }
+
+    .bottom-button {
+      border: none;
+      background: transparent;
+      padding: 9px 4px;
+      border-radius: 12px;
+      font-size: 12px;
+      color: #777;
+    }
+
+    .bottom-button.active {
+      background: #f0f0f0;
+      color: #1d1d1f;
+      font-weight: 600;
+    }
+
+    @media (max-width: 750px) {
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .category-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .app {
+        padding: 20px 15px 100px;
+      }
+
+      h1 {
+        font-size: 29px;
+      }
+
+      .date {
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 430px) {
+
+      .category-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .category {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header>
+    <div class="logo">PA</div>
+    <div class="date" id="date"></div>
+  </header>
+
+
+  <!-- HOJE -->
+
+  <main id="todayPage" class="page active">
+
+    <h1>Bom dia! 👋</h1>
+
+    <p class="subtitle">
+      Vamos organizar o teu dia?
+    </p>
+
+    <div class="grid">
+
+      <section class="card">
+
+        <h2>📥 Inbox</h2>
+
+        <textarea
+          id="input"
+          placeholder="Escreve aqui o que tens para fazer...
+
+Exemplos:
+
+Reunião do núcleo quinta-feira às 20h
+
+Tenho de entregar o trabalho de Marketing dia 18
+
+Treino de futebol quarta às 20h30">
+        </textarea>
+
+        <button class="primary" onclick="addItem()">
+          Adicionar ao PA
+        </button>
+
+      </section>
+
+
+      <section class="card">
+
+        <h2>📅 Próximos</h2>
+
+        <div id="upcoming"></div>
+
+      </section>
+
+    </div>
+
+
+    <section class="advice">
+
+      <strong>🧠 Sugestão do PA</strong>
+
+      <p id="adviceText">
+        Adiciona alguma coisa na Inbox e eu começo a organizá-la.
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <!-- INBOX -->
+
+  <main id="inboxPage" class="page">
+
+    <h1>Inbox 📥</h1>
+
+    <p class="subtitle">
+      Tudo o que envias para o PA fica aqui organizado.
+    </p>
+
+    <section class="card">
+
+      <textarea
+        id="inboxInput"
+        placeholder="Escreve aqui..."
+      ></textarea>
+
+      <button class="primary" onclick="addFromInbox()">
+        Adicionar ao PA
+      </button>
+
+    </section>
+
+    <section class="card">
+
+      <h2>Entradas recentes</h2>
+
+      <div id="inboxItems"></div>
+
+    </section>
+
+  </main>
+
+
+  <!-- CALENDÁRIO -->
+
+  <main id="calendarPage" class="page">
+
+    <h1>Calendário 📅</h1>
+
+    <p class="subtitle">
+      Os teus compromissos organizados por data.
+    </p>
+
+    <section class="card">
+
+      <div id="calendarItems"></div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ORGANIZAÇÃO -->
+
+  <main id="organisationPage" class="page">
+
+    <h1>Organização 📂</h1>
+
+    <p class="subtitle">
+      As tuas áreas pessoais, académicas e profissionais.
+    </p>
+
+    <section class="card">
+
+      <div class="category-grid">
+
+        <button class="category" onclick="openCategory('ae')">
+          <div class="category-icon">🏛️</div>
+          <div class="category-name">AE</div>
+          <div class="category-description">
+            Eventos, reuniões, projetos e tarefas
+          </div>
+        </button>
+
+
+        <button class="category" onclick="openCategory('nucleo')">
+          <div class="category-icon">👥</div>
+          <div class="category-name">Núcleo</div>
+          <div class="category-description">
+            Reuniões, projetos e atividades
+          </div>
+        </button>
+
+
+        <button class="category" onclick="openCategory('escola')">
+          <div class="category-icon">🎓</div>
+          <div class="category-name">Escola</div>
+          <div class="category-description">
+            Cadeiras, trabalhos, testes e exames
+          </div>
+        </button>
+
+
+        <button class="category" onclick="openCategory('futebol')">
+          <div class="category-icon">⚽</div>
+          <div class="category-name">Futebol</div>
+          <div class="category-description">
+            Treinos, jogos e objetivos
+          </div>
+        </button>
+
+
+        <button class="category" onclick="openCategory('pessoal')">
+          <div class="category-icon">👤</div>
+          <div class="category-name">Pessoal</div>
+          <div class="category-description">
+            Compromissos, compras e tarefas
+          </div>
+        </button>
+
+
+        <button class="category" onclick="openCategory('financas')">
+          <div class="category-icon">💰</div>
+          <div class="category-name">Finanças</div>
+          <div class="category-description">
+            Pagamentos, despesas e organização
+          </div>
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- AE -->
+
+    <section id="category-ae" class="subpage">
+
+      <button class="back" onclick="closeCategory()">
+        ← Voltar
+      </button>
+
+      <section class="card">
+
+        <h2>🏛️ Associação de Estudantes</h2>
+
+        <div class="section">
+          <div class="section-title">📅 Eventos</div>
+          <div class="subitem">Eventos da AE</div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">👥 Reuniões</div>
+          <div class="subitem">Reuniões</div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">📋 Projetos</div>
+          <div class="subitem">Projetos em desenvolvimento</div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">✅ Tarefas</div>
+          <div id="aeTasks"></div>
+        </div>
+
+      </section>
+
+    </section>
+
+
+    <!-- NÚCLEO -->
+
+    <section id="category-nucleo" class="subpage">
+
+      <button class="back" onclick="closeCategory()">
+        ← Voltar
+      </button>
+
+      <section class="card">
+
+        <h2>👥 Núcleo</h2>
+
+        <div class="section">
+          <div class="section-title">👥 Reuniões</div>
+          <div class="subitem">Reuniões do núcleo</div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">📋 Projetos</div>
+          <div class="subitem">Projetos do núcleo</div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">🎉 Atividades</div>
+          <div class="subitem">Atividades e iniciativas</div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">✅ Tarefas</div>
+          <div id="nucleoTasks"></div>
+        </div>
+
+      </section>
+
+    </section>
+
+
+    <!-- ESCOLA -->
+
+    <section id="category-escola" class="subpage">
+
+      <button class="back" onclick="closeCategory()">
+        ← Voltar
+      </button>
+
+      <section class="card">
+
+        <h2>🎓 Escola</h2>
+
+        <div class="section">
+
+          <div class="section-title">
+            📚 2026/2027
+          </div>
+
+          <div class="section">
+
+            <div class="section-title">
+              1.º semestre
+            </div>
+
+            <div class="subitem">
+              📘 Contabilidade
+            </div>
+
+            <div class="subitem">
+              📘 Marketing
+            </div>
+
+            <div class="subitem">
+              📘 Cadeiras a adicionar
+            </div>
+
+          </div>
+
+
+          <div class="section">
+
+            <div class="section-title">
+              2.º semestre
+            </div>
+
+            <div class="subitem">
+              📘 Cadeiras a adicionar
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="section">
+
+          <div class="section-title">
+            📚 Trabalhos
+          </div>
+
+          <div id="schoolTasks"></div>
+
+        </div>
+
+
+        <div class="section">
+
+          <div class="section-title">
+            📝 Frequências e testes
+          </div>
+
+          <div class="subitem">
+            Ainda não tens nenhum registado.
+          </div>
+
+        </div>
+
+
+        <div class="section">
+
+          <div class="section-title">
+            🎓 Exames
+          </div>
+
+          <div class="subitem">
+            Ainda não tens nenhum registado.
+          </div>
+
+        </div>
+
+      </section>
+
+    </section>
+
+
+    <!-- FUTEBOL -->
+
+    <section id="category-futebol" class="subpage">
+
+      <button class="back" onclick="closeCategory()">
+        ← Voltar
+      </button>
+
+      <section class="card">
+
+        <h2>⚽ Futebol</h2>
+
+        <div class="section">
+          <div class="section-title">🏃 Treinos</div>
+          <div id="footballItems"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">🏆 Jogos</div>
+          <div class="subitem">Jogos a adicionar</div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">🎯 Objetivos</div>
+          <div class="subitem">Objetivos pessoais</div>
+        </div>
+
+      </section>
+
+    </section>
+
+
+    <!-- PESSOAL -->
+
+    <section id="category-pessoal" class="subpage">
+
+      <button class="back" onclick="closeCategory()">
+        ← Voltar
+      </button>
+
+      <section class="card">
+
+        <h2>👤 Pessoal</h2>
+
+        <div class="section">
+          <div class="section-title">📅 Compromissos</div>
+          <div id="personalItems"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">🛒 Compras</div>
+          <div class="subitem">Lista de compras</div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">✅ Tarefas</div>
+          <div class="subitem">Tarefas pessoais</div>
+        </div>
+
+      </section>
+
+    </section>
+
+
+    <!-- FINANÇAS -->
+
+    <section id="category-financas" class="subpage">
+
+      <button class="back" onclick="closeCategory()">
+        ← Voltar
+      </button>
+
+      <section class="card">
+
+        <h2>💰 Finanças</h2>
+
+        <div class="section">
+          <div class="section-title">💳 Pagamentos</div>
+          <div class="subitem">Pagamentos a fazer</div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">💸 Despesas</div>
+          <div class="subitem">Despesas registadas</div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">📊 Organização financeira</div>
+          <div class="subitem">Área financeira do PA</div>
+        </div>
+
+      </section>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- NAVEGAÇÃO -->
+
+<nav class="bottom-nav">
+
+  <button
+    class="bottom-button active"
+    id="navToday"
+    onclick="showPage('today')">
+    🏠<br>
+    Hoje
+  </button>
+
+  <button
+    class="bottom-button"
+    id="navInbox"
+    onclick="showPage('inbox')">
+    📥<br>
+    Inbox
+  </button>
+
+  <button
+    class="bottom-button"
+    id="navCalendar"
+    onclick="showPage('calendar')">
+    📅<br>
+    Calendário
+  </button>
+
+  <button
+    class="bottom-button"
+    id="navOrganisation"
+    onclick="showPage('organisation')">
+    📂<br>
+    Organização
+  </button>
+
+</nav>
+
+
+<script>
+
+const STORAGE_KEY = "PA_FINAL_ITEMS";
+
+
+function getItems() {
+
+  return JSON.parse(
+    localStorage.getItem(STORAGE_KEY) || "[]"
+  );
+
+}
+
+
+function saveItems(items) {
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(items)
+  );
+
+}
+
+
+function updateDate() {
+
+  const now = new Date();
+
+  document.getElementById("date").textContent =
+    now.toLocaleDateString("pt-PT", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+
+}
+
+
+function detectCategory(text) {
+
+  const t = text.toLowerCase();
+
+  if (
+    t.includes("núcleo") ||
+    t.includes("nucleo")
+  ) {
+    return "👥 Núcleo";
+  }
+
+  if (
+    t.includes("ae") ||
+    t.includes("associação de estudantes")
+  ) {
+    return "🏛️ AE";
+  }
+
+  if (
+    t.includes("futebol") ||
+    t.includes("treino") ||
+    t.includes("jogo")
+  ) {
+    return "⚽ Futebol";
+  }
+
+  if (
+    t.includes("escola") ||
+    t.includes("trabalho") ||
+    t.includes("marketing") ||
+    t.includes("contabilidade") ||
+    t.includes("frequência") ||
+    t.includes("frequencia") ||
+    t.includes("exame") ||
+    t.includes("teste") ||
+    t.includes("cadeira") ||
+    t.includes("aula") ||
+    t.includes("professor")
+  ) {
+    return "🎓 Escola";
+  }
+
+  if (
+    t.includes("comprar") ||
+    t.includes("compras") ||
+    t.includes("pessoal")
+  ) {
+    return "👤 Pessoal";
+  }
+
+  if (
+    t.includes("dinheiro") ||
+    t.includes("pagar") ||
+    t.includes("pagamento") ||
+    t.includes("finanças") ||
+    t.includes("financas") ||
+    t.includes("despesa")
+  ) {
+    return "💰 Finanças";
+  }
+
+  return "📌 Por organizar";
+
+}
+
+
+function detectType(text) {
+
+  const t = text.toLowerCase();
+
+  if (
+    t.includes("entregar") ||
+    t.includes("trabalho") ||
+    t.includes("comprar") ||
+    t.includes("estudar") ||
+    t.includes("fazer") ||
+    t.includes("enviar") ||
+    t.includes("pagar")
+  ) {
+    return "Tarefa";
+  }
+
+  if (
+    t.includes("reunião") ||
+    t.includes("reuniao") ||
+    t.includes("treino") ||
+    t.includes("jogo") ||
+    t.includes("aula") ||
+    t.includes("frequência") ||
+    t.includes("frequencia") ||
+    t.includes("exame") ||
+    t.includes("teste")
+  ) {
+    return "Compromisso";
+  }
+
+  return "Nota";
+
+}
+
+
+function detectDate(text) {
+
+  const t = text.toLowerCase();
+
+  const now = new Date();
+
+  const weekdays = {
+    domingo: 0,
+    segunda: 1,
+    "segunda-feira": 1,
+    terça: 2,
+    "terça-feira": 2,
+    quarta: 3,
+    "quarta-feira": 3,
+    quinta: 4,
+    "quinta-feira": 4,
+    sexta: 5,
+    "sexta-feira": 5,
+    sábado: 6
+  };
+
+
+  for (const name in weekdays) {
+
+    if (t.includes(name)) {
+
+      const d = new Date(now);
+
+      let diff =
+        (weekdays[name] - d.getDay() + 7) % 7;
+
+      if (diff === 0) {
+        diff = 7;
+      }
+
+      d.setDate(
+        d.getDate() + diff
+      );
+
+      return d.toISOString();
+
+    }
+
+  }
+
+
+  const match =
+    t.match(
+      /\bdia\s+(\d{1,2})(?:\s+de\s+([a-zç]+))?/i
+    );
+
+
+  if (match) {
+
+    const months = {
+      janeiro: 0,
+      fevereiro: 1,
+      março: 2,
+      abril: 3,
+      maio: 4,
+      junho: 5,
+      julho: 6,
+      agosto: 7,
+      setembro: 8,
+      outubro: 9,
+      novembro: 10,
+      dezembro: 11
+    };
+
+
+    const day =
+      Number(match[1]);
+
+
+    const month =
+      match[2]
+        ? months[match[2]]
+        : now.getMonth();
+
+
+    let year =
+      now.getFullYear();
+
+
+    const d =
+      new Date(year, month, day);
+
+
+    if (d < now) {
+      d.setFullYear(year + 1);
+    }
+
+
+    return d.toISOString();
+
+  }
+
+  return null;
+
+}
+
+
+function detectTime(text) {
+
+  const match =
+    text.match(
+      /\b(?:às|as|pelas|por volta das?)\s*(\d{1,2})(?:[:h](\d{2}))?\b/i
+    );
+
+
+  if (!match) {
+    return "";
+  }
+
+
+  return (
+    match[1].padStart(2, "0") +
+    ":" +
+    (match[2] || "00").padStart(2, "0")
+  );
+
+}
+
+
+function escapeHTML(text) {
+
+  return text.replace(
+    /[&<>"']/g,
+    function(character) {
+
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[character];
+
+    }
+  );
+
+}
+
+
+function addItemFromText(text) {
+
+  text = text.trim();
+
+  if (!text) {
+    return;
+  }
+
+
+  const item = {
+
+    id: Date.now(),
+
+    text: text,
+
+    category:
+      detectCategory(text),
+
+    type:
+      detectType(text),
+
+    date:
+      detectDate(text),
+
+    time:
+      detectTime(text),
+
+    created:
+      new Date().toISOString()
+
+  };
+
+
+  const items =
+    getItems();
+
+
+  items.unshift(item);
+
+
+  saveItems(items);
+
+
+  renderAll();
+
+}
+
+
+function addItem() {
+
+  const input =
+    document.getElementById("input");
+
+  if (!input.value.trim()) {
+
+    alert(
+      "Escreve primeiro o que precisas de fazer 😊"
+    );
+
+    return;
+
+  }
+
+
+  addItemFromText(
+    input.value
+  );
+
+
+  input.value = "";
+
+}
+
+
+function addFromInbox() {
+
+  const input =
+    document.getElementById("inboxInput");
+
+
+  if (!input.value.trim()) {
+
+    alert(
+      "Escreve primeiro alguma coisa 😊"
+    );
+
+    return;
+
+  }
+
+
+  addItemFromText(
+    input.value
+  );
+
+
+  input.value = "";
+
+}
+
+
+function formatDate(date) {
+
+  if (!date) {
+    return "Data não indicada";
+  }
+
+
+  return new Date(date).toLocaleDateString(
+    "pt-PT",
+    {
+      weekday: "short",
+      day: "numeric",
+      month: "short"
+    }
+  );
+
+}
+
+
+function renderUpcoming() {
+
+  const box =
+    document.getElementById("upcoming");
+
+  const items =
+    getItems();
+
+
+  if (!items.length) {
+
+    box.innerHTML =
+      '<div class="empty">Ainda não tens nada aqui.</div>';
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    items.slice(0, 8).map(function(item) {
+
+      return `
+        <div class="item">
+
+          <div class="item-title">
+            ${escapeHTML(item.text)}
+          </div>
+
+          <div class="meta">
+            ${item.date ? formatDate(item.date) : "Sem data"}
+            ${item.time ? " · " + item.time : ""}
+          </div>
+
+          <span class="tag">
+            ${item.category} · ${item.type}
+          </span>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+function renderInbox() {
+
+  const box =
+    document.getElementById("inboxItems");
+
+  const items =
+    getItems();
+
+
+  if (!items.length) {
+
+    box.innerHTML =
+      '<div class="empty">A Inbox está vazia.</div>';
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    items.map(function(item) {
+
+      return `
+        <div class="item">
+
+          <div class="item-title">
+            ${escapeHTML(item.text)}
+          </div>
+
+          <div class="meta">
+            ${item.date ? formatDate(item.date) : "Sem data"}
+            ${item.time ? " · " + item.time : ""}
+          </div>
+
+          <span class="tag">
+            ${item.category} · ${item.type}
+          </span>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+function renderCalendar() {
+
+  const box =
+    document.getElementById("calendarItems");
+
+  const items =
+    getItems()
+      .filter(item => item.date)
+      .sort(
+        (a,b) =>
+          new Date(a.date) -
+          new Date(b.date)
+      );
+
+
+  if (!items.length) {
+
+    box.innerHTML =
+      '<div class="empty">Ainda não tens compromissos com data.</div>';
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    items.map(function(item) {
+
+      const date =
+        new Date(item.date);
+
+
+      return `
+        <div class="calendar-item">
+
+          <div class="calendar-date">
+
+            <div class="calendar-day">
+              ${date.getDate()}
+            </div>
+
+            <div class="calendar-month">
+              ${date.toLocaleDateString(
+                "pt-PT",
+                {month:"short"}
+              )}
+            </div>
+
+          </div>
+
+
+          <div>
+
+            <div class="item-title">
+              ${escapeHTML(item.text)}
+            </div>
+
+            <div class="meta">
+              ${item.time || "Hora não indicada"}
+            </div>
+
+            <span class="tag">
+              ${item.category} · ${item.type}
+            </span>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+function renderCategoryItems(
+  elementId,
+  category
+) {
+
+  const box =
+    document.getElementById(elementId);
+
+
+  if (!box) {
+    return;
+  }
+
+
+  const items =
+    getItems().filter(
+      item =>
+        item.category === category
+    );
+
+
+  if (!items.length) {
+
+    box.innerHTML =
+      '<div class="subitem">Ainda não tens nada registado aqui.</div>';
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    items.map(function(item) {
+
+      return `
+        <div class="subitem">
+
+          <strong>
+            ${escapeHTML(item.text)}
+          </strong>
+
+          <div class="meta">
+            ${item.type}
+            ${item.date ? " · " + formatDate(item.date) : ""}
+            ${item.time ? " · " + item.time : ""}
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+function renderAll() {
+
+  renderUpcoming();
+
+  renderInbox();
+
+  renderCalendar();
+
+  renderCategoryItems(
+    "aeTasks",
+    "🏛️ AE"
+  );
+
+  renderCategoryItems(
+    "nucleoTasks",
+    "👥 Núcleo"
+  );
+
+  renderCategoryItems(
+    "schoolTasks",
+    "🎓 Escola"
+  );
+
+  renderCategoryItems(
+    "footballItems",
+    "⚽ Futebol"
+  );
+
+  renderCategoryItems(
+    "personalItems",
+    "👤 Pessoal"
+  );
+
+
+  const tasks =
+    getItems().filter(
+      item =>
+        item.type === "Tarefa"
+    );
+
+
+  document.getElementById(
+    "adviceText"
+  ).textContent = tasks.length
+    ? `Tens ${tasks.length} tarefa(s) registada(s). O PA já começou a organizá-las.`
+    : "Adiciona alguma coisa na Inbox e eu começo a organizá-la.";
+
+}
+
+
+function showPage(page) {
+
+  document
+    .querySelectorAll(".page")
+    .forEach(
+      element =>
+        element.classList.remove("active")
+    );
+
+
+  document
+    .querySelectorAll(".bottom-button")
+    .forEach(
+      element =>
+        element.classList.remove("active")
+    );
+
+
+  if (page === "today") {
+
+    document
+      .getElementById("todayPage")
+      .classList.add("active");
+
+    document
+      .getElementById("navToday")
+      .classList.add("active");
+
+  }
+
+
+  if (page === "inbox") {
+
+    document
+      .getElementById("inboxPage")
+      .classList.add("active");
+
+    document
+      .getElementById("navInbox")
+      .classList.add("active");
+
+  }
+
+
+  if (page === "calendar") {
+
+    document
+      .getElementById("calendarPage")
+      .classList.add("active");
+
+    document
+      .getElementById("navCalendar")
+      .classList.add("active");
+
+  }
+
+
+  if (page === "organisation") {
+
+    document
+      .getElementById("organisationPage")
+      .classList.add("active");
+
+    document
+      .getElementById("navOrganisation")
+      .classList.add("active");
+
+  }
+
+
+  closeCategory();
+
+}
+
+
+function openCategory(category) {
+
+  document
+    .querySelectorAll(".subpage")
+    .forEach(
+      element =>
+        element.classList.remove("active")
+    );
+
+
+  const page =
+    document.getElementById(
+      "category-" + category
+    );
+
+
+  if (page) {
+    page.classList.add("active");
+  }
+
+}
+
+
+function closeCategory() {
+
+  document
+    .querySelectorAll(".subpage")
+    .forEach(
+      element =>
+        element.classList.remove("active")
+    );
+
+}
+
+
+updateDate();
+
+renderAll();
+
+</script>
+
+</body>
+</html>
