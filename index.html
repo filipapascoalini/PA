@@ -1,1652 +1,2015 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PA — Personal Assistant</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PA — Personal Assistant</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    body {
-      background: #f5f5f7;
-      color: #1d1d1f;
-      min-height: 100vh;
-    }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f5f7;
+    color: #171717;
+    min-height: 100vh;
+}
 
-    button {
-      font: inherit;
-      cursor: pointer;
-    }
+button,
+input {
+    font: inherit;
+}
 
-    .app {
-      max-width: 1100px;
-      margin: auto;
-      padding: 25px 20px 100px;
-    }
+button {
+    border: none;
+    cursor: pointer;
+}
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
-    }
+.app {
+    max-width: 480px;
+    margin: auto;
+    min-height: 100vh;
+    background: #f5f5f7;
+    padding-bottom: 90px;
+}
 
-    .logo {
-      font-size: 28px;
-      font-weight: 700;
-    }
+.header {
+    padding: 28px 20px 12px;
+}
 
-    .date {
-      color: #777;
-      font-size: 14px;
-    }
+.logo {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
 
-    .page {
-      display: none;
-    }
+.date {
+    color: #777;
+    margin-top: 5px;
+    font-size: 14px;
+}
 
-    .page.active {
-      display: block;
-    }
+.page {
+    display: none;
+    padding: 10px 20px 20px;
+}
 
-    h1 {
-      font-size: 34px;
-      margin-bottom: 8px;
-    }
+.page.active {
+    display: block;
+}
 
-    .subtitle {
-      color: #777;
-      margin-bottom: 25px;
-    }
+.greeting {
+    margin: 20px 0;
+}
 
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 22px;
-      margin-bottom: 20px;
-      box-shadow: 0 5px 20px rgba(0,0,0,.05);
-    }
+.greeting h1 {
+    font-size: 27px;
+    margin-bottom: 6px;
+}
 
-    .card h2 {
-      font-size: 20px;
-      margin-bottom: 17px;
-    }
+.greeting p {
+    color: #777;
+}
 
-    textarea {
-      width: 100%;
-      min-height: 140px;
-      border: 1px solid #ddd;
-      border-radius: 14px;
-      padding: 15px;
-      font-size: 16px;
-      resize: vertical;
-      outline: none;
-    }
+.section-title {
+    font-size: 19px;
+    font-weight: 750;
+    margin: 25px 0 12px;
+}
 
-    textarea:focus {
-      border-color: #888;
-    }
+.card {
+    background: white;
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
 
-    .primary {
-      width: 100%;
-      margin-top: 12px;
-      padding: 14px;
-      border: none;
-      border-radius: 13px;
-      background: #1d1d1f;
-      color: white;
-    }
+.advice {
+    background: #171717;
+    color: white;
+}
 
-    .primary:hover {
-      background: #333;
-    }
+.advice p {
+    color: #ddd;
+    line-height: 1.45;
+    margin-top: 7px;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
 
-    .item {
-      padding: 14px 0;
-      border-bottom: 1px solid #eee;
-    }
+.item-main {
+    flex: 1;
+}
 
-    .item:last-child {
-      border-bottom: none;
-    }
+.item-title {
+    font-weight: 700;
+    margin-bottom: 5px;
+}
 
-    .item-title {
-      font-weight: 650;
-    }
+.item-meta {
+    color: #777;
+    font-size: 13px;
+    line-height: 1.5;
+}
 
-    .meta {
-      color: #777;
-      font-size: 13px;
-      margin-top: 5px;
-    }
+.delete-btn {
+    background: #f1f1f1;
+    border-radius: 10px;
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+}
 
-    .tag {
-      display: inline-block;
-      background: #f0f0f0;
-      padding: 5px 9px;
-      border-radius: 20px;
-      margin-top: 7px;
-      font-size: 12px;
-    }
+.empty {
+    text-align: center;
+    padding: 35px 15px;
+    color: #888;
+}
 
-    .advice {
-      background: #1d1d1f;
-      color: white;
-      border-radius: 20px;
-      padding: 22px;
-      margin-top: 20px;
-    }
+.inbox-box {
+    background: white;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
 
-    .advice p {
-      color: #ddd;
-      margin-top: 8px;
-      line-height: 1.5;
-    }
+.inbox-input {
+    width: 100%;
+    min-height: 110px;
+    border: none;
+    outline: none;
+    resize: none;
+    font-size: 16px;
+    line-height: 1.5;
+}
 
-    .empty {
-      color: #888;
-      font-size: 14px;
-    }
+.send-btn {
+    width: 100%;
+    background: #171717;
+    color: white;
+    padding: 14px;
+    border-radius: 13px;
+    font-weight: 700;
+    margin-top: 10px;
+}
 
-    /* NAVEGAÇÃO */
+.brain-response {
+    margin-top: 14px;
+    padding: 15px;
+    border-radius: 16px;
+    background: #ececec;
+    display: none;
+    line-height: 1.5;
+}
 
-    .navigation {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 28px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
+.category-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
 
-    .nav-button {
-      flex: 0 0 auto;
-      border: none;
-      background: white;
-      padding: 10px 15px;
-      border-radius: 12px;
-      color: #555;
-    }
+.category {
+    background: white;
+    border-radius: 18px;
+    padding: 18px;
+    min-height: 110px;
+    text-align: left;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
 
-    .nav-button.active {
-      background: #1d1d1f;
-      color: white;
-    }
+.category-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+}
 
-    /* ORGANIZAÇÃO */
+.category-name {
+    font-weight: 750;
+}
 
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-    }
+.category-count {
+    color: #888;
+    font-size: 13px;
+    margin-top: 4px;
+}
 
-    .category {
-      background: #f5f5f7;
-      border-radius: 17px;
-      padding: 20px;
-      border: none;
-      text-align: left;
-      transition: transform .15s;
-    }
+.back-btn {
+    background: white;
+    padding: 10px 14px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
 
-    .category:hover {
-      transform: translateY(-2px);
-    }
+.folder {
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
 
-    .category-icon {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
+.folder strong {
+    display: block;
+    margin-bottom: 4px;
+}
 
-    .category-name {
-      font-weight: 650;
-      font-size: 16px;
-    }
+.folder span {
+    color: #888;
+    font-size: 13px;
+}
 
-    .category-description {
-      color: #777;
-      font-size: 13px;
-      margin-top: 5px;
-    }
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(480px, 100%);
+    height: 76px;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(15px);
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 10;
+}
 
-    /* SUBPÁGINAS */
+.nav-btn {
+    background: none;
+    color: #888;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
 
-    .subpage {
-      display: none;
-    }
+.nav-btn span {
+    font-size: 21px;
+}
 
-    .subpage.active {
-      display: block;
-    }
+.nav-btn.active {
+    color: #171717;
+    font-weight: 700;
+}
 
-    .back {
-      border: none;
-      background: #e9e9eb;
-      padding: 10px 15px;
-      border-radius: 11px;
-      margin-bottom: 18px;
-    }
+.search {
+    width: 100%;
+    padding: 13px 15px;
+    border: none;
+    border-radius: 14px;
+    margin-bottom: 15px;
+    outline: none;
+}
 
-    .section {
-      background: #f5f5f7;
-      border-radius: 16px;
-      padding: 17px;
-      margin-bottom: 12px;
-    }
+.modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    z-index: 20;
+}
 
-    .section-title {
-      font-weight: 650;
-      margin-bottom: 10px;
-    }
+.modal {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 20px;
+    padding: 22px;
+}
 
-    .subitem {
-      background: white;
-      border-radius: 12px;
-      padding: 12px;
-      margin-top: 8px;
-      border: 1px solid #eee;
-    }
+.modal h3 {
+    margin-bottom: 10px;
+}
 
-    /* CALENDÁRIO */
+.modal p {
+    color: #666;
+    line-height: 1.45;
+    margin-bottom: 18px;
+}
 
-    .calendar-item {
-      display: flex;
-      gap: 15px;
-      padding: 15px 0;
-      border-bottom: 1px solid #eee;
-    }
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+}
 
-    .calendar-date {
-      min-width: 55px;
-      text-align: center;
-      background: #f5f5f7;
-      border-radius: 12px;
-      padding: 9px 5px;
-    }
+.modal-buttons button {
+    flex: 1;
+    padding: 13px;
+    border-radius: 12px;
+    font-weight: 700;
+}
 
-    .calendar-day {
-      font-size: 20px;
-      font-weight: 700;
-    }
+.cancel {
+    background: #eee;
+}
 
-    .calendar-month {
-      font-size: 11px;
-      color: #777;
-      text-transform: uppercase;
-    }
+.confirm {
+    background: #171717;
+    color: white;
+}
 
-    /* NAVEGAÇÃO INFERIOR */
+.choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+}
 
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(700px, calc(100% - 25px));
-      background: rgba(255,255,255,.94);
-      backdrop-filter: blur(15px);
-      border: 1px solid #ddd;
-      border-radius: 18px 18px 0 0;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      padding: 8px;
-      z-index: 10;
-    }
+.choice {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 11px;
+    text-align: left;
+}
 
-    .bottom-button {
-      border: none;
-      background: transparent;
-      padding: 9px 4px;
-      border-radius: 12px;
-      font-size: 12px;
-      color: #777;
-    }
+.calendar-day {
+    margin-bottom: 22px;
+}
 
-    .bottom-button.active {
-      background: #f0f0f0;
-      color: #1d1d1f;
-      font-weight: 600;
-    }
+.calendar-day h3 {
+    margin-bottom: 10px;
+}
 
-    @media (max-width: 750px) {
-
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .category-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .app {
-        padding: 20px 15px 100px;
-      }
-
-      h1 {
-        font-size: 29px;
-      }
-
-      .date {
-        font-size: 12px;
-      }
-    }
-
-    @media (max-width: 430px) {
-
-      .category-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .category {
-        padding: 16px;
-      }
-    }
-  </style>
+.tag {
+    display: inline-block;
+    background: #eee;
+    border-radius: 8px;
+    padding: 3px 7px;
+    font-size: 11px;
+    margin-top: 5px;
+}
+</style>
 </head>
 
 <body>
 
 <div class="app">
 
-  <header>
-    <div class="logo">PA</div>
-    <div class="date" id="date"></div>
-  </header>
+    <header class="header">
+        <div class="logo">PA</div>
+        <div class="date" id="currentDate"></div>
+    </header>
 
+    <!-- HOJE -->
+    <main id="homePage" class="page active">
 
-  <!-- HOJE -->
+        <div class="greeting">
+            <h1 id="greeting"></h1>
+            <p>Vamos organizar o teu dia? 👋</p>
+        </div>
 
-  <main id="todayPage" class="page active">
+        <div class="card advice" id="adviceCard">
+            <strong>🧠 Conselho do PA</strong>
+            <p id="adviceText">Ainda estou a conhecer a tua agenda.</p>
+        </div>
 
-    <h1>Bom dia! 👋</h1>
+        <div class="section-title">O teu dia</div>
 
-    <p class="subtitle">
-      Vamos organizar o teu dia?
-    </p>
+        <div id="todayItems"></div>
 
-    <div class="grid">
+    </main>
 
-      <section class="card">
+    <!-- INBOX -->
+    <main id="inboxPage" class="page">
 
-        <h2>📥 Inbox</h2>
+        <div class="greeting">
+            <h1>Inbox 📥</h1>
+            <p>Escreve normalmente. O PA trata do resto.</p>
+        </div>
 
-        <textarea
-          id="input"
-          placeholder="Escreve aqui o que tens para fazer...
+        <div class="inbox-box">
+            <textarea
+                id="inboxInput"
+                class="inbox-input"
+                placeholder="Ex.: Tenho reunião do núcleo quinta-feira às 20h"
+            ></textarea>
 
-Exemplos:
+            <button class="send-btn" onclick="processInput()">
+                Adicionar ao PA
+            </button>
+        </div>
 
-Reunião do núcleo quinta-feira às 20h
+        <div id="brainResponse" class="brain-response"></div>
 
-Tenho de entregar o trabalho de Marketing dia 18
+        <div class="section-title">Últimos registos</div>
+        <div id="inboxItems"></div>
 
-Treino de futebol quarta às 20h30">
-        </textarea>
+    </main>
 
-        <button class="primary" onclick="addItem()">
-          Adicionar ao PA
+    <!-- CALENDÁRIO -->
+    <main id="calendarPage" class="page">
+
+        <div class="greeting">
+            <h1>Calendário 📅</h1>
+            <p>O que tens agendado.</p>
+        </div>
+
+        <div id="calendarItems"></div>
+
+    </main>
+
+    <!-- ORGANIZAÇÃO -->
+    <main id="organizationPage" class="page">
+
+        <div class="greeting">
+            <h1>Organização 🗂️</h1>
+            <p>As tuas áreas.</p>
+        </div>
+
+        <div class="category-grid" id="categoryGrid"></div>
+
+    </main>
+
+    <!-- CATEGORIA -->
+    <main id="categoryPage" class="page">
+
+        <button class="back-btn" onclick="showPage('organizationPage')">
+            ← Voltar
         </button>
 
-      </section>
-
-
-      <section class="card">
-
-        <h2>📅 Próximos</h2>
-
-        <div id="upcoming"></div>
-
-      </section>
-
-    </div>
-
-
-    <section class="advice">
-
-      <strong>🧠 Sugestão do PA</strong>
-
-      <p id="adviceText">
-        Adiciona alguma coisa na Inbox e eu começo a organizá-la.
-      </p>
-
-    </section>
-
-  </main>
-
-
-  <!-- INBOX -->
-
-  <main id="inboxPage" class="page">
-
-    <h1>Inbox 📥</h1>
-
-    <p class="subtitle">
-      Tudo o que envias para o PA fica aqui organizado.
-    </p>
-
-    <section class="card">
-
-      <textarea
-        id="inboxInput"
-        placeholder="Escreve aqui..."
-      ></textarea>
-
-      <button class="primary" onclick="addFromInbox()">
-        Adicionar ao PA
-      </button>
-
-    </section>
-
-    <section class="card">
-
-      <h2>Entradas recentes</h2>
-
-      <div id="inboxItems"></div>
-
-    </section>
-
-  </main>
-
-
-  <!-- CALENDÁRIO -->
-
-  <main id="calendarPage" class="page">
-
-    <h1>Calendário 📅</h1>
-
-    <p class="subtitle">
-      Os teus compromissos organizados por data.
-    </p>
-
-    <section class="card">
-
-      <div id="calendarItems"></div>
-
-    </section>
-
-  </main>
-
-
-  <!-- ORGANIZAÇÃO -->
-
-  <main id="organisationPage" class="page">
-
-    <h1>Organização 📂</h1>
-
-    <p class="subtitle">
-      As tuas áreas pessoais, académicas e profissionais.
-    </p>
-
-    <section class="card">
-
-      <div class="category-grid">
-
-        <button class="category" onclick="openCategory('ae')">
-          <div class="category-icon">🏛️</div>
-          <div class="category-name">AE</div>
-          <div class="category-description">
-            Eventos, reuniões, projetos e tarefas
-          </div>
-        </button>
-
-
-        <button class="category" onclick="openCategory('nucleo')">
-          <div class="category-icon">👥</div>
-          <div class="category-name">Núcleo</div>
-          <div class="category-description">
-            Reuniões, projetos e atividades
-          </div>
-        </button>
-
-
-        <button class="category" onclick="openCategory('escola')">
-          <div class="category-icon">🎓</div>
-          <div class="category-name">Escola</div>
-          <div class="category-description">
-            Cadeiras, trabalhos, testes e exames
-          </div>
-        </button>
-
-
-        <button class="category" onclick="openCategory('futebol')">
-          <div class="category-icon">⚽</div>
-          <div class="category-name">Futebol</div>
-          <div class="category-description">
-            Treinos, jogos e objetivos
-          </div>
-        </button>
-
-
-        <button class="category" onclick="openCategory('pessoal')">
-          <div class="category-icon">👤</div>
-          <div class="category-name">Pessoal</div>
-          <div class="category-description">
-            Compromissos, compras e tarefas
-          </div>
-        </button>
-
-
-        <button class="category" onclick="openCategory('financas')">
-          <div class="category-icon">💰</div>
-          <div class="category-name">Finanças</div>
-          <div class="category-description">
-            Pagamentos, despesas e organização
-          </div>
-        </button>
-
-      </div>
-
-    </section>
-
-
-    <!-- AE -->
-
-    <section id="category-ae" class="subpage">
-
-      <button class="back" onclick="closeCategory()">
-        ← Voltar
-      </button>
-
-      <section class="card">
-
-        <h2>🏛️ Associação de Estudantes</h2>
-
-        <div class="section">
-          <div class="section-title">📅 Eventos</div>
-          <div class="subitem">Eventos da AE</div>
+        <div class="greeting">
+            <h1 id="categoryTitle"></h1>
+            <p id="categoryDescription"></p>
         </div>
 
-        <div class="section">
-          <div class="section-title">👥 Reuniões</div>
-          <div class="subitem">Reuniões</div>
-        </div>
+        <div id="categoryFolders"></div>
+        <div id="categoryItems"></div>
 
-        <div class="section">
-          <div class="section-title">📋 Projetos</div>
-          <div class="subitem">Projetos em desenvolvimento</div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">✅ Tarefas</div>
-          <div id="aeTasks"></div>
-        </div>
-
-      </section>
-
-    </section>
-
-
-    <!-- NÚCLEO -->
-
-    <section id="category-nucleo" class="subpage">
-
-      <button class="back" onclick="closeCategory()">
-        ← Voltar
-      </button>
-
-      <section class="card">
-
-        <h2>👥 Núcleo</h2>
-
-        <div class="section">
-          <div class="section-title">👥 Reuniões</div>
-          <div class="subitem">Reuniões do núcleo</div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">📋 Projetos</div>
-          <div class="subitem">Projetos do núcleo</div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">🎉 Atividades</div>
-          <div class="subitem">Atividades e iniciativas</div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">✅ Tarefas</div>
-          <div id="nucleoTasks"></div>
-        </div>
-
-      </section>
-
-    </section>
-
-
-    <!-- ESCOLA -->
-
-    <section id="category-escola" class="subpage">
-
-      <button class="back" onclick="closeCategory()">
-        ← Voltar
-      </button>
-
-      <section class="card">
-
-        <h2>🎓 Escola</h2>
-
-        <div class="section">
-
-          <div class="section-title">
-            📚 2026/2027
-          </div>
-
-          <div class="section">
-
-            <div class="section-title">
-              1.º semestre
-            </div>
-
-            <div class="subitem">
-              📘 Contabilidade
-            </div>
-
-            <div class="subitem">
-              📘 Marketing
-            </div>
-
-            <div class="subitem">
-              📘 Cadeiras a adicionar
-            </div>
-
-          </div>
-
-
-          <div class="section">
-
-            <div class="section-title">
-              2.º semestre
-            </div>
-
-            <div class="subitem">
-              📘 Cadeiras a adicionar
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="section">
-
-          <div class="section-title">
-            📚 Trabalhos
-          </div>
-
-          <div id="schoolTasks"></div>
-
-        </div>
-
-
-        <div class="section">
-
-          <div class="section-title">
-            📝 Frequências e testes
-          </div>
-
-          <div class="subitem">
-            Ainda não tens nenhum registado.
-          </div>
-
-        </div>
-
-
-        <div class="section">
-
-          <div class="section-title">
-            🎓 Exames
-          </div>
-
-          <div class="subitem">
-            Ainda não tens nenhum registado.
-          </div>
-
-        </div>
-
-      </section>
-
-    </section>
-
-
-    <!-- FUTEBOL -->
-
-    <section id="category-futebol" class="subpage">
-
-      <button class="back" onclick="closeCategory()">
-        ← Voltar
-      </button>
-
-      <section class="card">
-
-        <h2>⚽ Futebol</h2>
-
-        <div class="section">
-          <div class="section-title">🏃 Treinos</div>
-          <div id="footballItems"></div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">🏆 Jogos</div>
-          <div class="subitem">Jogos a adicionar</div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">🎯 Objetivos</div>
-          <div class="subitem">Objetivos pessoais</div>
-        </div>
-
-      </section>
-
-    </section>
-
-
-    <!-- PESSOAL -->
-
-    <section id="category-pessoal" class="subpage">
-
-      <button class="back" onclick="closeCategory()">
-        ← Voltar
-      </button>
-
-      <section class="card">
-
-        <h2>👤 Pessoal</h2>
-
-        <div class="section">
-          <div class="section-title">📅 Compromissos</div>
-          <div id="personalItems"></div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">🛒 Compras</div>
-          <div class="subitem">Lista de compras</div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">✅ Tarefas</div>
-          <div class="subitem">Tarefas pessoais</div>
-        </div>
-
-      </section>
-
-    </section>
-
-
-    <!-- FINANÇAS -->
-
-    <section id="category-financas" class="subpage">
-
-      <button class="back" onclick="closeCategory()">
-        ← Voltar
-      </button>
-
-      <section class="card">
-
-        <h2>💰 Finanças</h2>
-
-        <div class="section">
-          <div class="section-title">💳 Pagamentos</div>
-          <div class="subitem">Pagamentos a fazer</div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">💸 Despesas</div>
-          <div class="subitem">Despesas registadas</div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">📊 Organização financeira</div>
-          <div class="subitem">Área financeira do PA</div>
-        </div>
-
-      </section>
-
-    </section>
-
-  </main>
+    </main>
 
 </div>
 
-
-<!-- NAVEGAÇÃO -->
-
+<!-- NAV -->
 <nav class="bottom-nav">
 
-  <button
-    class="bottom-button active"
-    id="navToday"
-    onclick="showPage('today')">
-    🏠<br>
-    Hoje
-  </button>
+    <button class="nav-btn active" data-page="homePage" onclick="showPage('homePage')">
+        <span>🏠</span>
+        Hoje
+    </button>
 
-  <button
-    class="bottom-button"
-    id="navInbox"
-    onclick="showPage('inbox')">
-    📥<br>
-    Inbox
-  </button>
+    <button class="nav-btn" data-page="inboxPage" onclick="showPage('inboxPage')">
+        <span>📥</span>
+        Inbox
+    </button>
 
-  <button
-    class="bottom-button"
-    id="navCalendar"
-    onclick="showPage('calendar')">
-    📅<br>
-    Calendário
-  </button>
+    <button class="nav-btn" data-page="calendarPage" onclick="showPage('calendarPage')">
+        <span>📅</span>
+        Calendário
+    </button>
 
-  <button
-    class="bottom-button"
-    id="navOrganisation"
-    onclick="showPage('organisation')">
-    📂<br>
-    Organização
-  </button>
+    <button class="nav-btn" data-page="organizationPage" onclick="showPage('organizationPage')">
+        <span>🗂️</span>
+        Organização
+    </button>
 
 </nav>
 
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+
+    <div class="modal">
+
+        <h3 id="modalTitle"></h3>
+        <p id="modalText"></p>
+
+        <div class="modal-buttons">
+            <button class="cancel" onclick="closeModal()">
+                Cancelar
+            </button>
+
+            <button class="confirm" id="modalConfirm">
+                Confirmar
+            </button>
+        </div>
+
+    </div>
+
+</div>
 
 <script>
 
-const STORAGE_KEY = "PA_FINAL_ITEMS";
+const STORAGE_KEY = "PA_ITEMS_V4";
+
+let items = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+let pendingDelete = null;
+
+let pendingQuestion = null;
 
 
-function getItems() {
+/* =========================
+   CONFIGURAÇÃO
+========================= */
 
-  return JSON.parse(
-    localStorage.getItem(STORAGE_KEY) || "[]"
-  );
+const categories = {
+
+    "AE": {
+        icon: "🏛️",
+        description: "Associação de Estudantes",
+        folders: [
+            "Eventos",
+            "Reuniões",
+            "Projetos",
+            "Tarefas"
+        ]
+    },
+
+    "Núcleo": {
+        icon: "👥",
+        description: "Atividades e organização do núcleo",
+        folders: [
+            "Reuniões",
+            "Projetos",
+            "Atividades",
+            "Tarefas"
+        ]
+    },
+
+    "Escola": {
+        icon: "🎓",
+        description: "Vida académica",
+        folders: [
+            "2026/2027",
+            "1.º semestre",
+            "2.º semestre",
+            "Trabalhos",
+            "Frequências e testes",
+            "Exames"
+        ]
+    },
+
+    "Futebol": {
+        icon: "⚽",
+        description: "Treinos, jogos e objetivos",
+        folders: [
+            "Treinos",
+            "Jogos",
+            "Objetivos"
+        ]
+    },
+
+    "Pessoal": {
+        icon: "👤",
+        description: "A tua vida pessoal",
+        folders: [
+            "Compromissos",
+            "Compras",
+            "Tarefas"
+        ]
+    },
+
+    "Finanças": {
+        icon: "💰",
+        description: "Organização financeira",
+        folders: [
+            "Pagamentos",
+            "Despesas",
+            "Organização financeira"
+        ]
+    }
+
+};
+
+
+/* =========================
+   DATA
+========================= */
+
+const weekdays = [
+    "domingo",
+    "segunda-feira",
+    "terça-feira",
+    "quarta-feira",
+    "quinta-feira",
+    "sexta-feira",
+    "sábado"
+];
+
+const months = [
+    "janeiro",
+    "fevereiro",
+    "março",
+    "abril",
+    "maio",
+    "junho",
+    "julho",
+    "agosto",
+    "setembro",
+    "outubro",
+    "novembro",
+    "dezembro"
+];
+
+
+function normalize(text) {
+
+    return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
 
 }
 
 
-function saveItems(items) {
+function todayISO() {
 
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(items)
-  );
+    const d = new Date();
+
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2,"0");
+    const day = String(d.getDate()).padStart(2,"0");
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+function formatDate(dateString) {
+
+    if (!dateString) return "";
+
+    const d = new Date(dateString + "T12:00:00");
+
+    return d.toLocaleDateString("pt-PT", {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+    });
+
+}
+
+
+/* =========================
+   SAUDAÇÃO
+========================= */
+
+function updateGreeting() {
+
+    const hour = new Date().getHours();
+
+    let text = "Olá!";
+
+    if (hour < 12) {
+        text = "Bom dia! ☀️";
+    } else if (hour < 19) {
+        text = "Boa tarde! 👋";
+    } else {
+        text = "Boa noite! 🌙";
+    }
+
+    document.getElementById("greeting").textContent = text;
 
 }
 
 
 function updateDate() {
 
-  const now = new Date();
+    const d = new Date();
 
-  document.getElementById("date").textContent =
-    now.toLocaleDateString("pt-PT", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric"
-    });
+    document.getElementById("currentDate").textContent =
+        d.toLocaleDateString("pt-PT", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
 
 }
 
+
+/* =========================
+   DETEÇÃO DA CATEGORIA
+========================= */
 
 function detectCategory(text) {
 
-  const t = text.toLowerCase();
+    const t = normalize(text);
 
-  if (
-    t.includes("núcleo") ||
-    t.includes("nucleo")
-  ) {
-    return "👥 Núcleo";
-  }
+    if (
+        t.includes("associacao de estudantes") ||
+        t.includes("associacao") ||
+        t.includes("ae ") ||
+        t.includes("evento da ae") ||
+        t.includes("reuniao da ae")
+    ) {
+        return "AE";
+    }
 
-  if (
-    t.includes("ae") ||
-    t.includes("associação de estudantes")
-  ) {
-    return "🏛️ AE";
-  }
+    if (
+        t.includes("nucleo") ||
+        t.includes("nucleo de estudantes")
+    ) {
+        return "Núcleo";
+    }
 
-  if (
-    t.includes("futebol") ||
-    t.includes("treino") ||
-    t.includes("jogo")
-  ) {
-    return "⚽ Futebol";
-  }
+    if (
+        t.includes("faculdade") ||
+        t.includes("universidade") ||
+        t.includes("cadeira") ||
+        t.includes("frequencia") ||
+        t.includes("teste") ||
+        t.includes("exame") ||
+        t.includes("trabalho de") ||
+        t.includes("aula") ||
+        t.includes("professor") ||
+        t.includes("professora") ||
+        t.includes("marketing") ||
+        t.includes("contabilidade")
+    ) {
+        return "Escola";
+    }
 
-  if (
-    t.includes("escola") ||
-    t.includes("trabalho") ||
-    t.includes("marketing") ||
-    t.includes("contabilidade") ||
-    t.includes("frequência") ||
-    t.includes("frequencia") ||
-    t.includes("exame") ||
-    t.includes("teste") ||
-    t.includes("cadeira") ||
-    t.includes("aula") ||
-    t.includes("professor")
-  ) {
-    return "🎓 Escola";
-  }
+    if (
+        t.includes("futebol") ||
+        t.includes("treino") ||
+        t.includes("jogo")
+    ) {
+        return "Futebol";
+    }
 
-  if (
-    t.includes("comprar") ||
-    t.includes("compras") ||
-    t.includes("pessoal")
-  ) {
-    return "👤 Pessoal";
-  }
+    if (
+        t.includes("dinheiro") ||
+        t.includes("pagar") ||
+        t.includes("pagamento") ||
+        t.includes("despesa") ||
+        t.includes("financas") ||
+        t.includes("financeiro")
+    ) {
+        return "Finanças";
+    }
 
-  if (
-    t.includes("dinheiro") ||
-    t.includes("pagar") ||
-    t.includes("pagamento") ||
-    t.includes("finanças") ||
-    t.includes("financas") ||
-    t.includes("despesa")
-  ) {
-    return "💰 Finanças";
-  }
+    if (
+        t.includes("consulta") ||
+        t.includes("medico") ||
+        t.includes("comprar") ||
+        t.includes("compras") ||
+        t.includes("aniversario") ||
+        t.includes("familia") ||
+        t.includes("pessoal")
+    ) {
+        return "Pessoal";
+    }
 
-  return "📌 Por organizar";
+    return null;
 
 }
 
+
+/* =========================
+   TIPO
+========================= */
 
 function detectType(text) {
 
-  const t = text.toLowerCase();
+    const t = normalize(text);
 
-  if (
-    t.includes("entregar") ||
-    t.includes("trabalho") ||
-    t.includes("comprar") ||
-    t.includes("estudar") ||
-    t.includes("fazer") ||
-    t.includes("enviar") ||
-    t.includes("pagar")
-  ) {
-    return "Tarefa";
-  }
+    if (
+        t.includes("frequencia") ||
+        t.includes("teste") ||
+        t.includes("exame")
+    ) {
+        return "Avaliação";
+    }
 
-  if (
-    t.includes("reunião") ||
-    t.includes("reuniao") ||
-    t.includes("treino") ||
-    t.includes("jogo") ||
-    t.includes("aula") ||
-    t.includes("frequência") ||
-    t.includes("frequencia") ||
-    t.includes("exame") ||
-    t.includes("teste")
-  ) {
+    if (
+        t.includes("trabalho") ||
+        t.includes("entregar") ||
+        t.includes("entrega")
+    ) {
+        return "Tarefa";
+    }
+
+    if (
+        t.includes("treino")
+    ) {
+        return "Treino";
+    }
+
+    if (
+        t.includes("jogo")
+    ) {
+        return "Jogo";
+    }
+
+    if (
+        t.includes("reuniao")
+    ) {
+        return "Reunião";
+    }
+
+    if (
+        t.includes("evento") ||
+        t.includes("sunset") ||
+        t.includes("atividade")
+    ) {
+        return "Evento";
+    }
+
+    if (
+        t.includes("comprar") ||
+        t.includes("compras")
+    ) {
+        return "Compra";
+    }
+
+    if (
+        t.includes("pagar") ||
+        t.includes("pagamento")
+    ) {
+        return "Pagamento";
+    }
+
     return "Compromisso";
-  }
-
-  return "Nota";
 
 }
 
 
-function detectDate(text) {
+/* =========================
+   SUBCATEGORIA
+========================= */
 
-  const t = text.toLowerCase();
+function detectSubcategory(text, category, type) {
 
-  const now = new Date();
+    const t = normalize(text);
 
-  const weekdays = {
-    domingo: 0,
-    segunda: 1,
-    "segunda-feira": 1,
-    terça: 2,
-    "terça-feira": 2,
-    quarta: 3,
-    "quarta-feira": 3,
-    quinta: 4,
-    "quinta-feira": 4,
-    sexta: 5,
-    "sexta-feira": 5,
-    sábado: 6
-  };
+    if (category === "AE") {
 
+        if (t.includes("reuniao")) return "Reuniões";
+        if (t.includes("evento") || t.includes("sunset")) return "Eventos";
+        if (t.includes("projeto")) return "Projetos";
 
-  for (const name in weekdays) {
-
-    if (t.includes(name)) {
-
-      const d = new Date(now);
-
-      let diff =
-        (weekdays[name] - d.getDay() + 7) % 7;
-
-      if (diff === 0) {
-        diff = 7;
-      }
-
-      d.setDate(
-        d.getDate() + diff
-      );
-
-      return d.toISOString();
+        return "Tarefas";
 
     }
 
-  }
+    if (category === "Núcleo") {
 
+        if (t.includes("reuniao")) return "Reuniões";
+        if (t.includes("projeto")) return "Projetos";
+        if (t.includes("atividade")) return "Atividades";
 
-  const match =
-    t.match(
-      /\bdia\s+(\d{1,2})(?:\s+de\s+([a-zç]+))?/i
-    );
+        return "Tarefas";
 
-
-  if (match) {
-
-    const months = {
-      janeiro: 0,
-      fevereiro: 1,
-      março: 2,
-      abril: 3,
-      maio: 4,
-      junho: 5,
-      julho: 6,
-      agosto: 7,
-      setembro: 8,
-      outubro: 9,
-      novembro: 10,
-      dezembro: 11
-    };
-
-
-    const day =
-      Number(match[1]);
-
-
-    const month =
-      match[2]
-        ? months[match[2]]
-        : now.getMonth();
-
-
-    let year =
-      now.getFullYear();
-
-
-    const d =
-      new Date(year, month, day);
-
-
-    if (d < now) {
-      d.setFullYear(year + 1);
     }
 
+    if (category === "Escola") {
 
-    return d.toISOString();
+        if (
+            t.includes("frequencia") ||
+            t.includes("teste")
+        ) {
+            return "Frequências e testes";
+        }
 
-  }
+        if (t.includes("exame")) {
+            return "Exames";
+        }
 
-  return null;
+        if (t.includes("trabalho")) {
+            return "Trabalhos";
+        }
+
+        if (t.includes("1 semestre")) {
+            return "1.º semestre";
+        }
+
+        if (t.includes("2 semestre")) {
+            return "2.º semestre";
+        }
+
+        return "2026/2027";
+
+    }
+
+    if (category === "Futebol") {
+
+        if (t.includes("treino")) return "Treinos";
+        if (t.includes("jogo")) return "Jogos";
+
+        return "Objetivos";
+
+    }
+
+    if (category === "Pessoal") {
+
+        if (t.includes("compr")) return "Compras";
+        if (t.includes("tarefa")) return "Tarefas";
+
+        return "Compromissos";
+
+    }
+
+    if (category === "Finanças") {
+
+        if (
+            t.includes("pagar") ||
+            t.includes("pagamento")
+        ) {
+            return "Pagamentos";
+        }
+
+        if (t.includes("despesa")) {
+            return "Despesas";
+        }
+
+        return "Organização financeira";
+
+    }
+
+    return "";
 
 }
 
+
+/* =========================
+   HORA
+========================= */
 
 function detectTime(text) {
 
-  const match =
-    text.match(
-      /\b(?:às|as|pelas|por volta das?)\s*(\d{1,2})(?:[:h](\d{2}))?\b/i
+    const match = text.match(
+        /\b([01]?\d|2[0-3])(?:[:h]([0-5]\d))?\s*(?:h)?\b/i
     );
 
+    if (!match) return null;
 
-  if (!match) {
-    return "";
-  }
+    const hour = String(match[1]).padStart(2,"0");
+    const minute = match[2]
+        ? String(match[2]).padStart(2,"0")
+        : "00";
 
-
-  return (
-    match[1].padStart(2, "0") +
-    ":" +
-    (match[2] || "00").padStart(2, "0")
-  );
+    return `${hour}:${minute}`;
 
 }
 
 
-function escapeHTML(text) {
+/* =========================
+   DATA
+========================= */
 
-  return text.replace(
-    /[&<>"']/g,
-    function(character) {
+function detectDate(text) {
 
-      return {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      }[character];
+    const t = normalize(text);
+
+    const now = new Date();
+
+    /* dia + mês */
+
+    const dateMatch = t.match(
+        /\b(\d{1,2})\s*(?:de\s*)?(janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\b/
+    );
+
+    if (dateMatch) {
+
+        const day = Number(dateMatch[1]);
+
+        const monthName = dateMatch[2];
+
+        const monthIndex = months.findIndex(
+            m => normalize(m) === monthName
+        );
+
+        if (monthIndex >= 0) {
+
+            let year = now.getFullYear();
+
+            const candidate =
+                new Date(year, monthIndex, day);
+
+            if (candidate < now) {
+                year++;
+            }
+
+            return `${year}-${String(monthIndex + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+
+        }
 
     }
-  );
-
-}
 
 
-function addItemFromText(text) {
+    /* dia/mês */
 
-  text = text.trim();
-
-  if (!text) {
-    return;
-  }
-
-
-  const item = {
-
-    id: Date.now(),
-
-    text: text,
-
-    category:
-      detectCategory(text),
-
-    type:
-      detectType(text),
-
-    date:
-      detectDate(text),
-
-    time:
-      detectTime(text),
-
-    created:
-      new Date().toISOString()
-
-  };
-
-
-  const items =
-    getItems();
-
-
-  items.unshift(item);
-
-
-  saveItems(items);
-
-
-  renderAll();
-
-}
-
-
-function addItem() {
-
-  const input =
-    document.getElementById("input");
-
-  if (!input.value.trim()) {
-
-    alert(
-      "Escreve primeiro o que precisas de fazer 😊"
+    const slashMatch = t.match(
+        /\b(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{4}))?\b/
     );
 
-    return;
+    if (slashMatch) {
 
-  }
+        const day = Number(slashMatch[1]);
+        const month = Number(slashMatch[2]);
 
+        const year =
+            slashMatch[3]
+            ? Number(slashMatch[3])
+            : now.getFullYear();
 
-  addItemFromText(
-    input.value
-  );
+        return `${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
 
-
-  input.value = "";
-
-}
-
-
-function addFromInbox() {
-
-  const input =
-    document.getElementById("inboxInput");
-
-
-  if (!input.value.trim()) {
-
-    alert(
-      "Escreve primeiro alguma coisa 😊"
-    );
-
-    return;
-
-  }
-
-
-  addItemFromText(
-    input.value
-  );
-
-
-  input.value = "";
-
-}
-
-
-function formatDate(date) {
-
-  if (!date) {
-    return "Data não indicada";
-  }
-
-
-  return new Date(date).toLocaleDateString(
-    "pt-PT",
-    {
-      weekday: "short",
-      day: "numeric",
-      month: "short"
     }
-  );
+
+
+    /* hoje */
+
+    if (t.includes("hoje")) {
+        return todayISO();
+    }
+
+
+    /* amanhã */
+
+    if (t.includes("amanha")) {
+
+        const d = new Date();
+        d.setDate(d.getDate() + 1);
+
+        return d.toISOString().split("T")[0];
+
+    }
+
+
+    /* depois de amanhã */
+
+    if (t.includes("depois de amanha")) {
+
+        const d = new Date();
+        d.setDate(d.getDate() + 2);
+
+        return d.toISOString().split("T")[0];
+
+    }
+
+
+    /* dias da semana */
+
+    const weekdayNames = {
+        domingo: 0,
+        segunda: 1,
+        "segunda-feira": 1,
+        terca: 2,
+        "terca-feira": 2,
+        quarta: 3,
+        "quarta-feira": 3,
+        quinta: 4,
+        "quinta-feira": 4,
+        sexta: 5,
+        "sexta-feira": 5,
+        sabado: 6,
+        "sabado-feira": 6
+    };
+
+    for (const dayName in weekdayNames) {
+
+        if (t.includes(dayName)) {
+
+            const target = weekdayNames[dayName];
+
+            const current = now.getDay();
+
+            let diff = target - current;
+
+            if (diff <= 0) {
+                diff += 7;
+            }
+
+            const d = new Date();
+
+            d.setDate(d.getDate() + diff);
+
+            return d.toISOString().split("T")[0];
+
+        }
+
+    }
+
+    return null;
 
 }
 
 
-function renderUpcoming() {
+/* =========================
+   PALAVRAS QUE INDICAM DATA/HORA
+========================= */
 
-  const box =
-    document.getElementById("upcoming");
+function hasDate(text) {
 
-  const items =
-    getItems();
+    const t = normalize(text);
+
+    return (
+        /\b\d{1,2}[\/\-]\d{1,2}\b/.test(t) ||
+        /\b\d{1,2}\s+de\s+\w+\b/.test(t) ||
+        t.includes("hoje") ||
+        t.includes("amanha") ||
+        t.includes("segunda") ||
+        t.includes("terca") ||
+        t.includes("quarta") ||
+        t.includes("quinta") ||
+        t.includes("sexta") ||
+        t.includes("sabado") ||
+        t.includes("domingo")
+    );
+
+}
 
 
-  if (!items.length) {
+function hasTime(text) {
 
-    box.innerHTML =
-      '<div class="empty">Ainda não tens nada aqui.</div>';
+    return /\b([01]?\d|2[0-3])(?:[:h][0-5]\d)?\s*(?:h)?\b/i.test(text);
 
-    return;
-
-  }
+}
 
 
-  box.innerHTML =
-    items.slice(0, 8).map(function(item) {
+/* =========================
+   INTELIGÊNCIA
+========================= */
 
-      return `
-        <div class="item">
+function interpret(text) {
 
-          <div class="item-title">
-            ${escapeHTML(item.text)}
-          </div>
+    const category = detectCategory(text);
+    const type = detectType(text);
+    const date = detectDate(text);
+    const time = detectTime(text);
 
-          <div class="meta">
-            ${item.date ? formatDate(item.date) : "Sem data"}
-            ${item.time ? " · " + item.time : ""}
-          </div>
+    let missing = [];
 
-          <span class="tag">
-            ${item.category} · ${item.type}
-          </span>
+    /*
+       Só exigimos categoria quando o PA
+       não consegue perceber a área.
+    */
+
+    if (!category) {
+        missing.push("category");
+    }
+
+    /*
+       Compromissos e eventos ficam muito
+       mais úteis quando têm data.
+    */
+
+    if (!date) {
+        missing.push("date");
+    }
+
+    return {
+        category,
+        type,
+        date,
+        time,
+        subcategory: category
+            ? detectSubcategory(text, category, type)
+            : null,
+        missing
+    };
+
+}
+
+
+/* =========================
+   PROCESSAR INPUT
+========================= */
+
+function processInput() {
+
+    const input = document.getElementById("inboxInput");
+
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    const result = interpret(text);
+
+    pendingQuestion = {
+        originalText: text,
+        result
+    };
+
+    if (result.missing.includes("category")) {
+
+        showCategoryQuestion();
+
+        return;
+    }
+
+    if (result.missing.includes("date")) {
+
+        showDateQuestion();
+
+        return;
+    }
+
+    saveNewItem(text, result);
+
+}
+
+
+/* =========================
+   PERGUNTA CATEGORIA
+========================= */
+
+function showCategoryQuestion() {
+
+    const box = document.getElementById("brainResponse");
+
+    box.style.display = "block";
+
+    box.innerHTML = `
+        <strong>🧠 Preciso de saber uma coisa:</strong>
+        <p style="margin-top:7px;">
+            Em que área queres guardar isto?
+        </p>
+
+        <div class="choice-grid">
+
+            <button class="choice" onclick="chooseCategory('AE')">
+                🏛️ AE
+            </button>
+
+            <button class="choice" onclick="chooseCategory('Núcleo')">
+                👥 Núcleo
+            </button>
+
+            <button class="choice" onclick="chooseCategory('Escola')">
+                🎓 Escola
+            </button>
+
+            <button class="choice" onclick="chooseCategory('Futebol')">
+                ⚽ Futebol
+            </button>
+
+            <button class="choice" onclick="chooseCategory('Pessoal')">
+                👤 Pessoal
+            </button>
+
+            <button class="choice" onclick="chooseCategory('Finanças')">
+                💰 Finanças
+            </button>
 
         </div>
-      `;
-
-    }).join("");
+    `;
 
 }
 
+
+function chooseCategory(category) {
+
+    if (!pendingQuestion) return;
+
+    const data = pendingQuestion;
+
+    data.result.category = category;
+
+    data.result.subcategory =
+        detectSubcategory(
+            data.originalText,
+            category,
+            data.result.type
+        );
+
+    data.result.missing =
+        data.result.missing.filter(
+            x => x !== "category"
+        );
+
+    pendingQuestion = data;
+
+    if (data.result.missing.includes("date")) {
+
+        showDateQuestion();
+
+        return;
+    }
+
+    saveNewItem(
+        data.originalText,
+        data.result
+    );
+
+}
+
+
+/* =========================
+   PERGUNTA DATA
+========================= */
+
+function showDateQuestion() {
+
+    const box = document.getElementById("brainResponse");
+
+    box.style.display = "block";
+
+    box.innerHTML = `
+        <strong>🧠 Falta só uma coisa:</strong>
+        <p style="margin-top:7px;">
+            Para que dia é isto?
+        </p>
+
+        <div class="choice-grid">
+
+            <button class="choice" onclick="chooseDate('hoje')">
+                Hoje
+            </button>
+
+            <button class="choice" onclick="chooseDate('amanha')">
+                Amanhã
+            </button>
+
+            <button class="choice" onclick="chooseDate('segunda')">
+                Segunda-feira
+            </button>
+
+            <button class="choice" onclick="chooseDate('terca')">
+                Terça-feira
+            </button>
+
+            <button class="choice" onclick="chooseDate('quarta')">
+                Quarta-feira
+            </button>
+
+            <button class="choice" onclick="chooseDate('quinta')">
+                Quinta-feira
+            </button>
+
+            <button class="choice" onclick="chooseDate('sexta')">
+                Sexta-feira
+            </button>
+
+            <button class="choice" onclick="chooseDate('sabado')">
+                Sábado
+            </button>
+
+            <button class="choice" onclick="chooseDate('domingo')">
+                Domingo
+            </button>
+
+        </div>
+    `;
+
+}
+
+
+function chooseDate(choice) {
+
+    if (!pendingQuestion) return;
+
+    const now = new Date();
+
+    if (choice === "hoje") {
+
+        pendingQuestion.result.date = todayISO();
+
+    } else if (choice === "amanha") {
+
+        const d = new Date();
+        d.setDate(d.getDate() + 1);
+
+        pendingQuestion.result.date =
+            d.toISOString().split("T")[0];
+
+    } else {
+
+        const map = {
+            segunda: 1,
+            terca: 2,
+            quarta: 3,
+            quinta: 4,
+            sexta: 5,
+            sabado: 6,
+            domingo: 0
+        };
+
+        const target = map[choice];
+
+        let diff = target - now.getDay();
+
+        if (diff <= 0) diff += 7;
+
+        const d = new Date();
+
+        d.setDate(d.getDate() + diff);
+
+        pendingQuestion.result.date =
+            d.toISOString().split("T")[0];
+
+    }
+
+    saveNewItem(
+        pendingQuestion.originalText,
+        pendingQuestion.result
+    );
+
+    pendingQuestion = null;
+
+}
+
+
+/* =========================
+   GUARDAR
+========================= */
+
+function saveNewItem(text, result) {
+
+    const item = {
+
+        id: Date.now(),
+
+        title: cleanTitle(text),
+
+        originalText: text,
+
+        category: result.category,
+
+        type: result.type,
+
+        subcategory: result.subcategory,
+
+        date: result.date,
+
+        time: result.time,
+
+        createdAt: new Date().toISOString()
+
+    };
+
+    items.push(item);
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(items)
+    );
+
+    const box =
+        document.getElementById("brainResponse");
+
+    box.style.display = "block";
+
+    box.innerHTML = `
+        <strong>✅ Guardado!</strong>
+        <p style="margin-top:7px;">
+            ${categoryLabel(item.category)}
+            ${item.subcategory ? " · " + item.subcategory : ""}
+            <br>
+            ${formatDate(item.date)}
+            ${item.time ? " às " + item.time : ""}
+        </p>
+    `;
+
+    document.getElementById("inboxInput").value = "";
+
+    pendingQuestion = null;
+
+    renderAll();
+
+}
+
+
+function cleanTitle(text) {
+
+    let title = text.trim();
+
+    title = title
+        .replace(/^tenho de /i, "")
+        .replace(/^tenho que /i, "")
+        .replace(/^preciso de /i, "")
+        .replace(/^preciso /i, "");
+
+    return title.charAt(0).toUpperCase() + title.slice(1);
+
+}
+
+
+function categoryLabel(category) {
+
+    if (!category) return "";
+
+    return categories[category].icon + " " + category;
+
+}
+
+
+/* =========================
+   NAVEGAÇÃO
+========================= */
+
+function showPage(pageId) {
+
+    document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+    });
+
+    document.getElementById(pageId).classList.add("active");
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+
+        btn.classList.toggle(
+            "active",
+            btn.dataset.page === pageId
+        );
+
+    });
+
+    renderAll();
+
+}
+
+
+/* =========================
+   RENDER HOJE
+========================= */
+
+function renderToday() {
+
+    const container =
+        document.getElementById("todayItems");
+
+    const today = todayISO();
+
+    const todayItems = items
+        .filter(item => item.date === today)
+        .sort(sortItems);
+
+    if (!todayItems.length) {
+
+        container.innerHTML = `
+            <div class="card empty">
+                Não tens nada marcado para hoje. 🎉
+            </div>
+        `;
+
+        updateAdvice([]);
+
+        return;
+    }
+
+    container.innerHTML =
+        todayItems.map(renderItem).join("");
+
+    updateAdvice(todayItems);
+
+}
+
+
+/* =========================
+   CONSELHO
+========================= */
+
+function updateAdvice(todayItems) {
+
+    const advice =
+        document.getElementById("adviceText");
+
+    if (!items.length) {
+
+        advice.textContent =
+            "Começa por colocar alguma coisa na Inbox. Eu trato da organização. 🧠";
+
+        return;
+    }
+
+    if (!todayItems.length) {
+
+        const upcoming =
+            items
+                .filter(item => item.date && item.date > todayISO())
+                .sort(sortItems)[0];
+
+        if (upcoming) {
+
+            advice.textContent =
+                `Hoje estás livre. A próxima coisa importante é "${upcoming.title}" no ${formatDate(upcoming.date)}.`;
+
+        } else {
+
+            advice.textContent =
+                "Não tens nada próximo marcado. Bom momento para organizar a semana. 😎";
+
+        }
+
+        return;
+    }
+
+    if (todayItems.length === 1) {
+
+        advice.textContent =
+            "Tens uma coisa hoje. Trata dela e ficas despachado. 💪";
+
+        return;
+    }
+
+    advice.textContent =
+        `Tens ${todayItems.length} coisas hoje. Começa pela que tiver maior prioridade ou pelo horário mais cedo.`;
+
+}
+
+
+/* =========================
+   RENDER INBOX
+========================= */
 
 function renderInbox() {
 
-  const box =
-    document.getElementById("inboxItems");
+    const container =
+        document.getElementById("inboxItems");
 
-  const items =
-    getItems();
+    const recent =
+        [...items]
+            .sort((a,b) => b.id - a.id)
+            .slice(0, 15);
 
+    if (!recent.length) {
 
-  if (!items.length) {
+        container.innerHTML = `
+            <div class="card empty">
+                A Inbox está vazia.
+            </div>
+        `;
 
-    box.innerHTML =
-      '<div class="empty">A Inbox está vazia.</div>';
+        return;
+    }
 
-    return;
-
-  }
-
-
-  box.innerHTML =
-    items.map(function(item) {
-
-      return `
-        <div class="item">
-
-          <div class="item-title">
-            ${escapeHTML(item.text)}
-          </div>
-
-          <div class="meta">
-            ${item.date ? formatDate(item.date) : "Sem data"}
-            ${item.time ? " · " + item.time : ""}
-          </div>
-
-          <span class="tag">
-            ${item.category} · ${item.type}
-          </span>
-
-        </div>
-      `;
-
-    }).join("");
+    container.innerHTML =
+        recent.map(renderItem).join("");
 
 }
 
+
+/* =========================
+   RENDER ITEM
+========================= */
+
+function renderItem(item) {
+
+    return `
+        <div class="card item">
+
+            <div class="item-main">
+
+                <div class="item-title">
+                    ${escapeHTML(item.title)}
+                </div>
+
+                <div class="item-meta">
+
+                    ${categoryLabel(item.category)}
+                    ${item.subcategory
+                        ? " · " + escapeHTML(item.subcategory)
+                        : ""
+                    }
+
+                    <br>
+
+                    ${item.type}
+
+                    ${item.date
+                        ? " · " + formatDate(item.date)
+                        : ""
+                    }
+
+                    ${item.time
+                        ? " · " + item.time
+                        : ""
+                    }
+
+                </div>
+
+            </div>
+
+            <button
+                class="delete-btn"
+                onclick="askDelete(${item.id})"
+            >
+                🗑️
+            </button>
+
+        </div>
+    `;
+
+}
+
+
+/* =========================
+   CALENDÁRIO
+========================= */
 
 function renderCalendar() {
 
-  const box =
-    document.getElementById("calendarItems");
+    const container =
+        document.getElementById("calendarItems");
 
-  const items =
-    getItems()
-      .filter(item => item.date)
-      .sort(
-        (a,b) =>
-          new Date(a.date) -
-          new Date(b.date)
-      );
+    const sorted =
+        [...items]
+            .filter(item => item.date)
+            .sort(sortItems);
 
+    if (!sorted.length) {
 
-  if (!items.length) {
-
-    box.innerHTML =
-      '<div class="empty">Ainda não tens compromissos com data.</div>';
-
-    return;
-
-  }
-
-
-  box.innerHTML =
-    items.map(function(item) {
-
-      const date =
-        new Date(item.date);
-
-
-      return `
-        <div class="calendar-item">
-
-          <div class="calendar-date">
-
-            <div class="calendar-day">
-              ${date.getDate()}
+        container.innerHTML = `
+            <div class="card empty">
+                Ainda não tens nada agendado. 📅
             </div>
+        `;
 
-            <div class="calendar-month">
-              ${date.toLocaleDateString(
-                "pt-PT",
-                {month:"short"}
-              )}
-            </div>
+        return;
+    }
 
-          </div>
+    const groups = {};
 
+    sorted.forEach(item => {
 
-          <div>
+        if (!groups[item.date]) {
+            groups[item.date] = [];
+        }
 
-            <div class="item-title">
-              ${escapeHTML(item.text)}
-            </div>
+        groups[item.date].push(item);
 
-            <div class="meta">
-              ${item.time || "Hora não indicada"}
-            </div>
+    });
 
-            <span class="tag">
-              ${item.category} · ${item.type}
-            </span>
+    container.innerHTML =
+        Object.keys(groups).map(date => {
 
-          </div>
+            return `
+                <div class="calendar-day">
 
-        </div>
-      `;
+                    <h3>
+                        ${formatDate(date)}
+                    </h3>
 
-    }).join("");
+                    ${groups[date]
+                        .map(renderItem)
+                        .join("")
+                    }
+
+                </div>
+            `;
+
+        }).join("");
 
 }
 
 
-function renderCategoryItems(
-  elementId,
-  category
-) {
+/* =========================
+   ORGANIZAÇÃO
+========================= */
 
-  const box =
-    document.getElementById(elementId);
+function renderCategories() {
 
+    const container =
+        document.getElementById("categoryGrid");
 
-  if (!box) {
-    return;
-  }
+    container.innerHTML =
+        Object.entries(categories).map(
+            ([name, data]) => {
 
+                const count =
+                    items.filter(
+                        item => item.category === name
+                    ).length;
 
-  const items =
-    getItems().filter(
-      item =>
-        item.category === category
-    );
+                return `
+                    <button
+                        class="category"
+                        onclick="openCategory('${name}')"
+                    >
 
+                        <div class="category-icon">
+                            ${data.icon}
+                        </div>
 
-  if (!items.length) {
+                        <div class="category-name">
+                            ${name}
+                        </div>
 
-    box.innerHTML =
-      '<div class="subitem">Ainda não tens nada registado aqui.</div>';
+                        <div class="category-count">
+                            ${count}
+                            ${count === 1 ? "item" : "itens"}
+                        </div>
 
-    return;
+                    </button>
+                `;
 
-  }
-
-
-  box.innerHTML =
-    items.map(function(item) {
-
-      return `
-        <div class="subitem">
-
-          <strong>
-            ${escapeHTML(item.text)}
-          </strong>
-
-          <div class="meta">
-            ${item.type}
-            ${item.date ? " · " + formatDate(item.date) : ""}
-            ${item.time ? " · " + item.time : ""}
-          </div>
-
-        </div>
-      `;
-
-    }).join("");
+            }
+        ).join("");
 
 }
 
 
-function renderAll() {
-
-  renderUpcoming();
-
-  renderInbox();
-
-  renderCalendar();
-
-  renderCategoryItems(
-    "aeTasks",
-    "🏛️ AE"
-  );
-
-  renderCategoryItems(
-    "nucleoTasks",
-    "👥 Núcleo"
-  );
-
-  renderCategoryItems(
-    "schoolTasks",
-    "🎓 Escola"
-  );
-
-  renderCategoryItems(
-    "footballItems",
-    "⚽ Futebol"
-  );
-
-  renderCategoryItems(
-    "personalItems",
-    "👤 Pessoal"
-  );
-
-
-  const tasks =
-    getItems().filter(
-      item =>
-        item.type === "Tarefa"
-    );
-
-
-  document.getElementById(
-    "adviceText"
-  ).textContent = tasks.length
-    ? `Tens ${tasks.length} tarefa(s) registada(s). O PA já começou a organizá-las.`
-    : "Adiciona alguma coisa na Inbox e eu começo a organizá-la.";
-
-}
-
-
-function showPage(page) {
-
-  document
-    .querySelectorAll(".page")
-    .forEach(
-      element =>
-        element.classList.remove("active")
-    );
-
-
-  document
-    .querySelectorAll(".bottom-button")
-    .forEach(
-      element =>
-        element.classList.remove("active")
-    );
-
-
-  if (page === "today") {
-
-    document
-      .getElementById("todayPage")
-      .classList.add("active");
-
-    document
-      .getElementById("navToday")
-      .classList.add("active");
-
-  }
-
-
-  if (page === "inbox") {
-
-    document
-      .getElementById("inboxPage")
-      .classList.add("active");
-
-    document
-      .getElementById("navInbox")
-      .classList.add("active");
-
-  }
-
-
-  if (page === "calendar") {
-
-    document
-      .getElementById("calendarPage")
-      .classList.add("active");
-
-    document
-      .getElementById("navCalendar")
-      .classList.add("active");
-
-  }
-
-
-  if (page === "organisation") {
-
-    document
-      .getElementById("organisationPage")
-      .classList.add("active");
-
-    document
-      .getElementById("navOrganisation")
-      .classList.add("active");
-
-  }
-
-
-  closeCategory();
-
-}
-
+/* =========================
+   CATEGORIA
+========================= */
 
 function openCategory(category) {
 
-  document
-    .querySelectorAll(".subpage")
-    .forEach(
-      element =>
-        element.classList.remove("active")
-    );
+    document.getElementById("categoryTitle").textContent =
+        categories[category].icon + " " + category;
 
+    document.getElementById("categoryDescription").textContent =
+        categories[category].description;
 
-  const page =
-    document.getElementById(
-      "category-" + category
-    );
+    const folderContainer =
+        document.getElementById("categoryFolders");
 
+    const categoryItems =
+        items.filter(
+            item => item.category === category
+        );
 
-  if (page) {
-    page.classList.add("active");
-  }
+    folderContainer.innerHTML =
+        categories[category].folders.map(folder => {
+
+            const count =
+                categoryItems.filter(
+                    item => item.subcategory === folder
+                ).length;
+
+            return `
+                <div class="folder">
+
+                    <strong>${folder}</strong>
+
+                    <span>
+                        ${count}
+                        ${count === 1 ? "item" : "itens"}
+                    </span>
+
+                </div>
+            `;
+
+        }).join("");
+
+    document.getElementById("categoryItems").innerHTML =
+        categoryItems.length
+            ? categoryItems
+                .sort(sortItems)
+                .map(renderItem)
+                .join("")
+            : `
+                <div class="card empty">
+                    Ainda não tens nada nesta área.
+                </div>
+            `;
+
+    showPage("categoryPage");
 
 }
 
 
-function closeCategory() {
+/* =========================
+   DELETE
+========================= */
 
-  document
-    .querySelectorAll(".subpage")
-    .forEach(
-      element =>
-        element.classList.remove("active")
-    );
+function askDelete(id) {
+
+    pendingDelete = id;
+
+    const item =
+        items.find(i => i.id === id);
+
+    if (!item) return;
+
+    document.getElementById("modalTitle").textContent =
+        "Apagar item?";
+
+    document.getElementById("modalText").textContent =
+        `Tens a certeza que queres apagar "${item.title}"?`;
+
+    document.getElementById("modalBg").style.display =
+        "flex";
+
+    document.getElementById("modalConfirm").onclick =
+        confirmDelete;
 
 }
 
 
+function confirmDelete() {
+
+    if (!pendingDelete) return;
+
+    items =
+        items.filter(
+            item => item.id !== pendingDelete
+        );
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(items)
+    );
+
+    pendingDelete = null;
+
+    closeModal();
+
+    renderAll();
+
+}
+
+
+function closeModal() {
+
+    document.getElementById("modalBg").style.display =
+        "none";
+
+}
+
+
+/* =========================
+   ORDENAÇÃO
+========================= */
+
+function sortItems(a,b) {
+
+    if (!a.date && !b.date) {
+        return a.id - b.id;
+    }
+
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+
+    if (a.date !== b.date) {
+        return a.date.localeCompare(b.date);
+    }
+
+    if (!a.time && !b.time) {
+        return a.id - b.id;
+    }
+
+    if (!a.time) return 1;
+    if (!b.time) return -1;
+
+    return a.time.localeCompare(b.time);
+
+}
+
+
+/* =========================
+   SEGURANÇA HTML
+========================= */
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================
+   RENDER GERAL
+========================= */
+
+function renderAll() {
+
+    renderToday();
+    renderInbox();
+    renderCalendar();
+    renderCategories();
+
+}
+
+
+/* =========================
+   ENTER NA INBOX
+========================= */
+
+document
+    .getElementById("inboxInput")
+    .addEventListener("keydown", function(event) {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            processInput();
+
+        }
+
+    });
+
+
+/* =========================
+   ARRANQUE
+========================= */
+
+updateGreeting();
 updateDate();
-
 renderAll();
 
 </script>
